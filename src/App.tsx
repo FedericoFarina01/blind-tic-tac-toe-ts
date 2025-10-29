@@ -12,16 +12,33 @@ const WINNING_LINES = [
   [2, 4, 6],
 ];
 
-type Square = null | "X" | "O";
+type Move = "X" | "O";
+type Square = null | Move;
 function App() {
   const [squares, setSquares] = useState<Square[]>(Array(9).fill(null));
+  const [prevMove, setPrevMove] = useState<Move>("O");
   return (
     <main>
       <section className="board">
         {squares.map((square, index) => {
           const id = `square-${index}`;
           return (
-            <button className="cell" key={id} type="button">
+            <button
+              className="cell"
+              key={id}
+              type="button"
+              onClick={() => {
+                const nextSquares = squares.map((square, _index) => {
+                  if (index === _index) {
+                    const nextMove = prevMove === "X" ? "O" : "X";
+                    setPrevMove(nextMove);
+                    return nextMove;
+                  }
+                  return square;
+                });
+                setSquares(nextSquares);
+              }}
+            >
               {square}
             </button>
           );
