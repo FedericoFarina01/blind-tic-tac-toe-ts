@@ -17,6 +17,7 @@ type Square = null | Move;
 function App() {
   const [squares, setSquares] = useState<Square[]>(Array(9).fill(null));
   const [prevMove, setPrevMove] = useState<Move>("O");
+  const [winner, setWinner] = useState<null | Move>(null);
   return (
     <main>
       <section className="board">
@@ -37,6 +38,10 @@ function App() {
                   return square;
                 });
                 setSquares(nextSquares);
+                const winner = getWinner(nextSquares);
+                if (winner) {
+                  setWinner(winner);
+                }
               }}
             >
               {square}
@@ -44,8 +49,23 @@ function App() {
           );
         })}
       </section>
+      <section>{winner ? <span>The winner is {winner}</span> : null}</section>
     </main>
   );
+}
+
+function getWinner(squares: Square[]) {
+  for (const winningLine of WINNING_LINES) {
+    const first = squares[winningLine[0]];
+    const second = squares[winningLine[1]];
+    const third = squares[winningLine[2]];
+    if ((first || second || third) === null) {
+      return null;
+    }
+    if (first === second && second === third && first === third) {
+      return first; // either second or third is OK as well
+    }
+  }
 }
 
 export default App;
